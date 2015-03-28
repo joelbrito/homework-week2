@@ -28,9 +28,11 @@ class MailboxTextFormatter
     
     out+=getHeader
     @mailbox.emails.each do |email|
-      out+="| #{email.date} " 
-      out+="| #{email.from[0,8]}"+" "*(8-email.from.length) # space + 8 chars
-      out+="| #{email.subject[0,23]}"+ " "*(23-email.subject.length) +"|" # space + 23 chars
+      out+="| #{email.date} "
+      tmp = email.from[0,8] # substring 0 to 8
+      out+="| #{tmp}"+" "*(8-tmp.length) # space + 8 chars
+      tmp = email.subject[0,23]
+      out+="| #{tmp}"+ " "*(23-tmp.length) +"|" # space + 23 chars
       out+="\n"
     end
     out+=getLine
