@@ -24,28 +24,35 @@ class MailboxTextFormatter
   end
   
   def format
+    
+    # Get the max length of each column text
+    # Enumerable.max_by -> http://ruby-doc.org/core-2.2.1/Enumerable.html#method-i-max_by
+    dateLength = @mailbox.emails.max_by { |e| e.date.length}.date.length
+    fromLength = @mailbox.emails.max_by { |e| e.from.length}.from.length
+    subjectLength = @mailbox.emails.max_by { |e| e.subject.length}.subject.length
+    
     out = "Mailbox: #{@mailbox.name}\n"
     
-    out+=getHeader
+    out+=getHeader(dateLength,fromLength,subjectLength)
     @mailbox.emails.each do |email|
-      out+="| #{email.date} "
-      tmp = email.from[0,8] # substring 0 to 8
-      out+="| #{tmp}"+" "*(8-tmp.length) # space + 8 chars
-      tmp = email.subject[0,23]
-      out+="| #{tmp}"+ " "*(23-tmp.length) +"|" # space + 23 chars
+      out+="| #{email.date}" + " "*(dateLength-email.date.length+1)
+      out+="| #{email.from}" + " "*(fromLength-email.from.length+1) 
+      out+="| #{email.subject}" + " "*(subjectLength-email.subject.length+1) + "|"
       out+="\n"
     end
-    out+=getLine
+    out+=getLine(dateLength,fromLength,subjectLength)
   end
   
   private
   
-  def getHeader
-    getLine + "| Date       | From    | Subject                |\n"+getLine 
+  def getHeader(dateLength,fromLength, subjectLength)
+    getLine(dateLength,fromLength, subjectLength) +
+    "| Date" + " "*(dateLength+1-4) + "| From" + " "*(fromLength+1-4) + "| Subject" + " "*(subjectLength+1-7) + "|\n" +
+    getLine(dateLength,fromLength, subjectLength) 
   end
   
-  def getLine
-    "+------------+---------+------------------------+\n"
+  def getLine(dateLength,fromLength, subjectLength)
+    "+"+"-"*(dateLength+2)+"+"+"-"*(fromLength+2)+"+"+"-"*(subjectLength+2)+"+\n"
   end
   
 end
